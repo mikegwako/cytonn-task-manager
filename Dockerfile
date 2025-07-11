@@ -16,27 +16,28 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy Laravel app
+# Copy the Laravel app
 COPY . /var/www/html
+
+# Set correct permissions for Laravel
+RUN chown -R www-data:www-data /var/www/html && \
+    chmod -R ug+rwX storage bootstrap/cache
 
 # Apache virtual host
 COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
-# ✅ Install Node.js 18 and npm (BEFORE vite build)
+# Install Node.js and npm
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs
 
-# ✅ Laravel backend dependencies
+# Laravel dependencies and frontend assets
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
-
-# ✅ Laravel frontend (Vite) assets
 RUN npm install && npm run build
 
-# ✅ Set up .env, permissions, and migrate database
+# Set environment, migrate, and cache config
 RUN cp .env.example .env && \
     sed -i 's|APP_URL=http://localhost|APP_URL=https://cytonn-task-manager.onrender.com|g' .env && \
     touch database/database.sqlite && \
-    chmod -R 775 database storage bootstrap/cache && \
     php artisan config:clear && \
     php artisan config:cache && \
     php artisan migrate --force
