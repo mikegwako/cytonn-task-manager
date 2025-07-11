@@ -37,7 +37,10 @@ RUN npm install && npm run build
 # Set environment, migrate, and cache config
 RUN cp .env.example .env && \
     sed -i 's|APP_URL=http://localhost|APP_URL=https://cytonn-task-manager.onrender.com|g' .env && \
-    touch database/database.sqlite && \
     php artisan config:clear && \
     php artisan config:cache && \
     php artisan migrate --force
+# Copy and set entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
