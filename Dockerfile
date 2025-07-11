@@ -28,9 +28,12 @@ COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
 # Laravel setup
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
-RUN cp .env.example .env
 
-# Recreate writable SQLite DB and set proper permissions
+# Build frontend assets
+RUN npm install && npm run build
+
+# Set up environment and database
+RUN cp .env.example .env
 RUN touch database/database.sqlite && \
     chmod -R 775 database storage bootstrap/cache && \
     php artisan config:cache && \
