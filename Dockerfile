@@ -26,6 +26,10 @@ RUN chmod -R 775 storage bootstrap/cache database
 # Apache virtual host
 COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
+# Install Node.js 18 and npm
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
 # Laravel setup
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
