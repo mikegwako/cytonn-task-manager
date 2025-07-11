@@ -32,8 +32,6 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 
 # Laravel setup
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
-
-# Build frontend assets
 RUN npm install && npm run build
 
 # Set up environment and database
