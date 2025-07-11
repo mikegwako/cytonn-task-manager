@@ -28,5 +28,5 @@ COPY ./docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 # Laravel setup
 RUN composer install
 RUN cp .env.example .env
-RUN php artisan key:generate
+RUN cp .env.example .env
 RUN php artisan migrate --force
