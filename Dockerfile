@@ -37,8 +37,10 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 RUN npm install && npm run build
 
 # Set up environment and database
-RUN cp .env.example .env
-RUN touch database/database.sqlite && \
+RUN cp .env.example .env && \
+    sed -i 's|APP_URL=http://localhost|APP_URL=https://cytonn-task-manager.onrender.com|g' .env && \
+    touch database/database.sqlite && \
     chmod -R 775 database storage bootstrap/cache && \
+    php artisan config:clear && \
     php artisan config:cache && \
     php artisan migrate --force
